@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>CreativeFlux Admin – Layout Skeleton (Animated Sidebar)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --page-bg: #f5f5f5;
+        --surface: #ffffff;
+        --surface-subtle: #fafafa;
+        --border-subtle: #e6e6e6;
+        --text-main: #111827;
+        --text-muted: #6b7280;
+        --primary: #111827;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--page-bg);
+        font-family: 'Poppins', sans-serif;
+        color: var(--text-main);
+      }
+
+      .app-shell {
+        --sidebar-width: 240px; /* 宽模式 sidebar */
+        display: grid;
+        grid-template-columns: var(--sidebar-width) minmax(0, 1fr) 360px;
+        min-height: 100vh;
+        background: var(--page-bg);
+        /* 只在断点处平滑调整三栏宽度 */
+        transition: grid-template-columns 0.8s ease-in-out;
+      }
+
+      @media (max-width: 1399px) {
+        .app-shell {
+          --sidebar-width: 112px; /* 窄模式 sidebar */
+          grid-template-columns: var(--sidebar-width) minmax(0, 1fr) 0;
+        }
+      }
+
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 48px 0 48px 48px;
+        background: var(--page-bg);
+      }
+
+      @media (max-width: 1399px) {
+        .sidebar {
+          align-items: center;
+        }
+      }
+
+      .sidebar-top {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 76px;
+      }
+
+      /* 统一的导航容器（宽 / 窄模式共用结构），>1200px 对齐视觉布局 */
+      .sidebar-nav {
+        background: #ffffff;
+        border: 1px solid #e6e6e6;
+        border-radius: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        padding: 0;
+        overflow: hidden;
+      }
+
+      .sidebar-nav-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        /* 用于断点切换时的渐现 */
+        opacity: 1;
+      }
+
+      .sidebar-nav-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 64px;
+        padding: 20px;
+        width: 100%;
+        box-sizing: border-box;
+        border: none;
+        cursor: pointer;
+        background: #ffffff;
+        /* 仅保留 hover 背景色的过渡，尺寸不做动画，避免复杂感 */
+        transition: background-color 0.15s ease;
+      }
+
+      /* hover：非当前态时整行变为浅灰 */
+      .sidebar-nav-item:hover {
+        background: #f1f1f1;
+      }
+
+      /* 当前态：橙色底，文字 & 图标反白 */
+      .sidebar-nav-item--primary-top {
+        background: #ff5b00;
+        /* border-radius: 20px 20px 0 0; 由容器统一控制 */
+        color: #ffffff;
+      }
+
+      .sidebar-nav-item--primary-top:hover {
+        background: #ff5b00;
+      }
+
+      .sidebar-nav-item-icon {
+        width: 24px;
+        height: 24px;
+        display: block;
+      }
+
+      .sidebar-nav-item-label {
+        font-family: 'Poppins', sans-serif;
+        font-size: 12px;
+        line-height: 1.32;
+        color: #212121;
+        white-space: nowrap;
+      }
+
+      .sidebar-nav-item--primary-top .sidebar-nav-item-label {
+        font-weight: 600;
+        color: #ffffff;
+      }
+
+      .sidebar-nav-item--primary-top .sidebar-nav-item-icon {
+        filter: brightness(0) invert(1);
+      }
+
+      .sidebar-nav-item:not(.sidebar-nav-item--primary-top)
+        .sidebar-nav-item-label {
+        font-weight: 400;
+      }
+
+      /* 窄模式：<1200px，仅展示圆形 icon 轨道，对应 Sidebar <1200px 版本 */
+      @media (max-width: 1399px) {
+        .sidebar-nav {
+          border-radius: 9999px;
+          padding: 0;
+          align-items: center;
+        }
+
+        .sidebar-nav-list {
+          align-items: center;
+          gap: 8px;
+          /* 初始向左轻微偏移 + 透明，之后滑入并渐现 */
+          opacity: 0;
+          transform: translateX(-6px);
+          /* 缩短等待时间，让内容几乎紧跟宽度变化出现 */
+          animation: sidebarFadeIn 0.25s ease-out 0.15s forwards;
+        }
+
+        .sidebar-nav-item {
+          width: 48px;
+          height: 48px;
+          padding: 0;
+          justify-content: center;
+          border-radius: 9999px;
+        }
+
+        .sidebar-nav-item-label {
+          display: none;
+        }
+      }
+
+      /* 渐现 + 从左向右滑入：用于窄版 sidebar 收缩后让内部元素出现 */
+      @keyframes sidebarFadeIn {
+        from {
+          opacity: 0;
+          transform: translateX(-12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      .sidebar-user {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .sidebar-user-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 999px;
+        overflow: hidden;
+        background: var(--surface-subtle);
+        flex-shrink: 0; /* 防止被压缩 */
+      }
+
+      .sidebar-user-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .sidebar-user-info {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+      }
+
+      .sidebar-user-name {
+        font-family: 'Poppins', sans-serif;
+        font-size: 14px;
+        font-weight: 400;
+        color: #000000;
+      }
+
+      .sidebar-logout {
+        border: none;
+        padding: 0;
+        background: none;
+        font-size: 14px;
+        cursor: pointer;
+        color: #000000;
+        font-family: 'Poppins', sans-serif;
+      }
+
+      @media (max-width: 1399px) {
+        .sidebar-user {
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .sidebar-user-info {
+          align-items: center;
+        }
+
+        .sidebar-user-name {
+          display: none;
+        }
+      }
+
+      .main {
+        padding: 48px 64px;
+        display: flex;
+        flex-direction: column;
+        gap: 48px;
+      }
+
+      @media (max-width: 1399px) {
+        .right-panel {
+          /* 窄屏时：通过 opacity/transform 隐藏，而不是 display:none */
+          /* 这样当切换回宽屏时，transition 会生效 */
+          opacity: 0;
+          transform: translateY(20px);
+          pointer-events: none; /* 防止点击 */
+          width: 0; /* 配合 app-shell grid，收缩占位 */
+          padding: 0;
+          overflow: hidden;
+          border: none;
+        }
+      }
+
+      /* 右侧栏容器本身的过渡 */
+      /* Center Area Styles */
+      .main-header {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      .main-title {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+        font-size: 32px;
+        line-height: 1.32;
+        margin: 0;
+        /* 复用 text-gradient-ai 样式 */
+        background: linear-gradient(
+          90deg,
+          rgba(255, 91, 0, 1) 3%,
+          rgba(255, 194, 0, 1) 20%,
+          rgba(56, 199, 140, 1) 44%,
+          rgba(8, 180, 185, 1) 62%,
+          rgba(32, 115, 249, 1) 79%,
+          rgba(77, 70, 211, 1) 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+      }
+
+      .main-subtitle {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 1.32;
+        color: #8a8a8a;
+        margin: 0;
+      }
+
+      .generate-section {
+        display: flex;
+        flex-direction: row;
+        gap: 24px; /* Gap between two cards */
+      }
+
+      .generate-card {
+        flex: 1;
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 48px; /* Figma padding */
+        
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 32px; /* Figma gap */
+        /* border: 1px solid var(--border-subtle); Removed by user */
+        border: 1px solid transparent; /* Reserve space for border */
+        position: relative; /* For absolute positioning of radio */
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      /* --- AI 通用样式定义 --- */
+
+      /* AI 6色线性渐变 (用于文字) */
+      .text-gradient-ai {
+        background: linear-gradient(
+          90deg,
+          rgba(255, 91, 0, 1) 3%,
+          rgba(255, 194, 0, 1) 20%,
+          rgba(56, 199, 140, 1) 44%,
+          rgba(8, 180, 185, 1) 62%,
+          rgba(32, 115, 249, 1) 79%,
+          rgba(77, 70, 211, 1) 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+      }
+
+      /* AI 圆锥渐变 (用于边框/背景) */
+      .border-gradient-ai {
+        background: #ffffff padding-box, /* 内部白色背景 */
+          conic-gradient(
+              from 0deg at 50% 50%,
+              #4d46d3 12%,
+              #2073f9 33%,
+              #08b4b9 46%,
+              #38c78c 55%,
+              #ffc200 67%,
+              #ff5b00 83%,
+              #f549ca 97%
+            )
+            border-box; /* 边框渐变 */
+        border: 1px solid transparent;
+      }
+
+      /* --- 卡片特殊交互: .card-hover-ai --- */
+
+      /* 默认状态下，按钮是普通样式 (继承 .generate-card-btn) */
+
+      /* Hover 状态 */
+      .generate-card.card-hover-ai:hover {
+        background: #f0f7ff;
+        border: 1px solid #94bdff;
+        box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08);
+      }
+
+      /* Hover 时，内部按钮变为 AI 样式 */
+      .generate-card.card-hover-ai:hover .generate-card-btn {
+        /* 应用 AI 边框渐变 */
+        background: #f0f7ff padding-box, /* 背景色要跟卡片hover背景一致 */
+          conic-gradient(
+              from 0deg at 50% 50%,
+              #4d46d3 12%,
+              #2073f9 33%,
+              #08b4b9 46%,
+              #38c78c 55%,
+              #ffc200 67%,
+              #ff5b00 83%,
+              #f549ca 97%
+            )
+            border-box;
+        border: 1px solid transparent;
+
+        /* 应用 AI 文字渐变 */
+        background-image: linear-gradient(
+          90deg,
+          rgba(255, 91, 0, 1) 3%,
+          rgba(255, 194, 0, 1) 20%,
+          rgba(56, 199, 140, 1) 44%,
+          rgba(8, 180, 185, 1) 62%,
+          rgba(32, 115, 249, 1) 79%,
+          rgba(77, 70, 211, 1) 100%
+        ); /* 文字渐变层 */
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent; /* 确保文字透明以显示渐变 */
+
+        /* 修正：由于 background-clip: text 会裁剪背景色，导致边框渐变失效。
+           解决方法：用伪元素做边框，或者用 box-shadow 模拟，或者简单点：
+           为了同时实现 "背景色 + 渐变边框 + 渐变文字"，CSS 比较 trick。
+           
+           方案 B (更稳健)：
+           按钮文字用 span 包裹应用 text-gradient。
+           按钮本身应用 border-gradient。
+        */
+      }
+
+      /* 修正方案：Hover 时按钮容器变边框，内部文字变渐变 */
+      .generate-card.card-hover-ai:hover .generate-card-btn {
+        /* 按钮背景 (用线性渐变模拟纯色 #FFFFFF) + 渐变边框 */
+        /* 修改位置：将下方的 #ffffff 替换为你想要的背景色 */
+        background: linear-gradient(#ffffff, #ffffff) padding-box,
+          conic-gradient(
+              from 0deg at 50% 50%,
+              #4d46d3 12%,
+              #2073f9 33%,
+              #08b4b9 46%,
+              #38c78c 55%,
+              #ffc200 67%,
+              #ff5b00 83%,
+              #f549ca 97%
+            )
+            border-box;
+        border: 1px solid transparent;
+        color: #353535; /* 默认颜色，会被子元素覆盖 */
+      }
+
+      /* 按钮内部文字 span (需要 HTML 配合加 span) */
+      .generate-card.card-hover-ai:hover .generate-card-btn span {
+        background: linear-gradient(
+          90deg,
+          rgba(255, 91, 0, 1) 3%,
+          rgba(255, 194, 0, 1) 20%,
+          rgba(56, 199, 140, 1) 44%,
+          rgba(8, 180, 185, 1) 62%,
+          rgba(32, 115, 249, 1) 79%,
+          rgba(77, 70, 211, 1) 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+      }
+
+      /* --- End AI Styles --- */
+
+      /* Left Card Specific Styles */
+      .generate-card-text {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .generate-card-title {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+        font-size: 24px;
+        line-height: 1.32;
+        color: rgba(0, 0, 0, 0.85);
+        margin: 0;
+      }
+
+      .generate-card-subtitle {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 1.5;
+        color: #8c8c8c;
+        margin: 0;
+      }
+
+      .generate-card-input-wrapper {
+        align-self: stretch;
+      }
+
+      .generate-card-input {
+        width: 100%;
+        padding: 8px 12px;
+        background: #ffffff;
+        border: 1px solid #d9d9d9;
+        border-radius: 2px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.85);
+        outline: none;
+        box-sizing: border-box; /* Ensure padding doesn't affect width */
+      }
+
+      .generate-card-input::placeholder {
+        color: #bfbfbf; /* Standard placeholder color */
+      }
+
+      .generate-card-btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 16px 48px;
+        background: #fcfcfc;
+        border: 1px solid #757575;
+        border-radius: 9999px;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+        font-size: 18px;
+        line-height: 1.32;
+        color: #353535;
+        cursor: pointer;
+        white-space: nowrap;
+        margin-top: auto; /* Push to bottom if needed, or rely on gap */
+      }
+
+      .generate-card-btn.disabled {
+        border-color: #e6e6e6;
+        color: #a8a8a8;
+        cursor: not-allowed;
+      }
+
+      .recent-section {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      .recent-title {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+        font-size: 24px;
+        line-height: 1.32;
+        color: #000000;
+        margin: 0;
+      }
+
+      .recent-content {
+        border-radius: 20px;
+        display: grid;
+        /* 自动填充：每列最小 220px，最大 1fr */
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 32px;
+      }
+
+      /* .recent-row Removed */
+
+      .recent-item {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 8px 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        /* Grid item 默认会拉伸填满格子 */
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border: 1px solid transparent; /* 预留边框空间，防止 hover 时抖动 */
+      }
+
+      .recent-item:hover {
+        box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08);
+        transform: translateY(-2px);
+        border-color: #e6e6e6;
+      }
+
+      .recent-item-title {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+        font-size: 14px;
+        line-height: 1.32;
+        color: #212121;
+        padding: 8px 4px;
+        margin: 0;
+        /* 限制标题行数，防止过高 */
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .recent-item-image {
+        width: 100%;
+        /* 修正比例为 8:5 */
+        aspect-ratio: 8 / 5;
+        border-radius: 6px;
+        background: rgba(0, 0, 0, 0.03);
+        object-fit: cover;
+        display: block;
+      }
+
+      .recent-item-info {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        align-items: center;
+        padding: 4px 8px;
+        gap: 10px;
+        margin-top: auto; /* 即使内容少，info 也推到底部 */
+      }
+
+      .recent-item-date {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 1.32;
+        color: #8a8a8a;
+        margin: 0;
+      }
+
+      /* .recent-divider Removed */
+
+      .right-panel {
+        padding: 48px;
+        background: #ffffff;
+        border-left: 1px solid var(--border-subtle);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+        /* 增加 opacity/transform 过渡 */
+        transition: opacity 0.4s ease-out, transform 0.4s ease-out,
+          width 0.4s ease-out, padding 0.4s ease-out;
+        opacity: 1;
+        transform: translateY(0);
+        width: 100%; /* grid 给多少占多少 */
+        overflow: hidden;
+      }
+
+      .right-panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        align-self: stretch;
+        gap: 10px;
+      }
+
+      .right-panel-line {
+        height: 1px;
+        flex: 1;
+        background-color: #4a4a4a;
+        opacity: 0.5;
+      }
+
+      .right-panel-title {
+        font-family: 'Poppins', sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        color: #000000;
+      }
+
+      .update-list {
+        display: flex;
+        flex-direction: column;
+        align-self: stretch;
+        gap: 10px;
+      }
+
+      .update-card {
+        padding: 20px;
+        border-radius: 12px;
+        background: #fafafa;
+        border: 1px solid var(--border-subtle);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .update-card-text {
+        font-family: 'Poppins', sans-serif;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #757575;
+        text-align: left;
+        width: 100%;
+      }
+
+      .update-card-date {
+        font-family: 'Poppins', sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.5;
+        color: #000000;
+        align-self: flex-end;
+      }
+      /* .right-panel .update-card 样式在下方通过 media query 定义 */
+
+      /* 进场动画定义 */
+      @keyframes fadeInUpCard {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* 在宽屏下，对卡片应用动画 */
+      @media (min-width: 1400px) {
+        .right-panel .update-card {
+          animation: fadeInUpCard 0.5s ease-out forwards;
+          opacity: 0; /* 动画开始前隐藏 */
+        }
+        .right-panel .update-card:nth-child(1) {
+          animation-delay: 0.2s; /* 稍晚于 panel 出现 */
+        }
+        .right-panel .update-card:nth-child(2) {
+          animation-delay: 0.3s;
+        }
+        .right-panel .update-card:nth-child(3) {
+          animation-delay: 0.4s;
+        }
+      }
+
+      /* 窄屏下重置卡片状态，以便切回宽屏时重播 */
+      @media (max-width: 1399px) {
+        .right-panel .update-card {
+          opacity: 0;
+          animation: none; /* 停止动画 */
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .app-shell,
+        .sidebar-nav,
+        .sidebar-nav-item,
+        .right-panel .update-card {
+          transition: none !important;
+          animation: none !important;
+          opacity: 1 !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="sidebar-top">
+          <nav class="sidebar-nav">
+            <div class="sidebar-nav-list">
+              <button class="sidebar-nav-item sidebar-nav-item--primary-top" type="button">
+                <img
+                  class="sidebar-nav-item-icon"
+                  src="assets/figma/NewIcon/Category.svg"
+                  alt="Dashboard"
+                />
+                <span class="sidebar-nav-item-label">Dashboard</span>
+              </button>
+              <button class="sidebar-nav-item" type="button">
+                <img
+                  class="sidebar-nav-item-icon"
+                  src="assets/figma/NewIcon/Document.svg"
+                  alt="Text to Video"
+                />
+                <span class="sidebar-nav-item-label">Text to Video</span>
+              </button>
+              <button
+                class="sidebar-nav-item"
+                type="button"
+              >
+                <img
+                  class="sidebar-nav-item-icon"
+                  src="assets/figma/NewIcon/Video.svg"
+                  alt="Video"
+                />
+                <span class="sidebar-nav-item-label">Video Generation</span>
+              </button>
+              <button class="sidebar-nav-item" type="button">
+                <img
+                  class="sidebar-nav-item-icon"
+                  src="assets/figma/NewIcon/Folder.svg"
+                  alt="Media Library"
+                />
+                <span class="sidebar-nav-item-label">Media Library</span>
+              </button>
+              <button class="sidebar-nav-item" type="button">
+                <img
+                  class="sidebar-nav-item-icon"
+                  src="assets/figma/NewIcon/Graph.svg"
+                  alt="Analytics"
+                />
+                <span class="sidebar-nav-item-label">Data Performance</span>
+              </button>
+              <button class="sidebar-nav-item" type="button">
+                <img
+                  class="sidebar-nav-item-icon"
+                  src="assets/figma/NewIcon/Setting.svg"
+                  alt="Settings"
+                />
+                <span class="sidebar-nav-item-label">Setting</span>
+              </button>
+            </div>
+          </nav>
+        </div>
+
+        <div class="sidebar-user">
+          <div class="sidebar-user-avatar">
+            <img src="assets/figma/user-avatar.png" alt="User avatar" />
+          </div>
+          <div class="sidebar-user-info">
+            <div class="sidebar-user-name">Hi, Ming Xu</div>
+            <button class="sidebar-logout">Logout</button>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="main-header">
+          <h1 class="main-title">Creative Flux Dashboard</h1>
+          <p class="main-subtitle">
+            Welcome to use Creative Flux，This tool will help you generate
+            amazing video content from your image footage. The whole process is
+            divided into multiple steps, and you can review the results at each
+            step and choose to try again.
+          </p>
+        </header>
+
+        <section class="generate-section">
+          <div class="generate-card card-hover-ai">
+            
+            <div class="generate-card-text">
+              <h3 class="generate-card-title">AID Specific</h3>
+              <p class="generate-card-subtitle">
+                showcasing 1 aid in 1 video
+              </p>
+            </div>
+            <button class="generate-card-btn"><span>Try It Now</span></button>
+          </div>
+          <div class="generate-card">
+            
+            <div class="generate-card-text">
+              <h3 class="generate-card-title" style="color: #A8A8A8;">
+                Destination Specific
+              </h3>
+              <p class="generate-card-subtitle" style="color: #A8A8A8;">
+                3 different aid of a particular destination
+              </p>
+            </div>
+            <button class="generate-card-btn disabled">Coming Soon...</button>
+          </div>
+        </section>
+
+        <section class="recent-section">
+          <h2 class="recent-title">Recent Project</h2>
+          <div class="recent-content">
+            <div class="recent-item">
+              <h3 class="recent-item-title">
+                Cruise Through Japan's Insane Car Scene
+              </h3>
+              <img
+                class="recent-item-image"
+                src="assets/figma/recent-thumb-1.png"
+                alt="Project thumbnail"
+              />
+              <div class="recent-item-info">
+                <span class="recent-item-date">Created 2025-11-10</span>
+              </div>
+            </div>
+            <div class="recent-item">
+              <h3 class="recent-item-title">
+                Cruise Through Japan's Insane Car Scene
+              </h3>
+              <img
+                class="recent-item-image"
+                src="assets/figma/recent-thumb-1.png"
+                alt="Project thumbnail"
+              />
+              <div class="recent-item-info">
+                <span class="recent-item-date">Edit 2025-11-10</span>
+              </div>
+            </div>
+            <div class="recent-item">
+              <h3 class="recent-item-title">
+                Cruise Through Japan's Insane Car Scene
+              </h3>
+              <img
+                class="recent-item-image"
+                src="assets/figma/recent-thumb-1.png"
+                alt="Project thumbnail"
+              />
+              <div class="recent-item-info">
+                <span class="recent-item-date">Edit 2025-11-10</span>
+              </div>
+            </div>
+            <div class="recent-item">
+              <h3 class="recent-item-title">
+                Cruise Through Japan's Insane Car Scene
+              </h3>
+              <img
+                class="recent-item-image"
+                src="assets/figma/recent-thumb-1.png"
+                alt="Project thumbnail"
+              />
+              <div class="recent-item-info">
+                <span class="recent-item-date">Edit 2025-11-10</span>
+              </div>
+            </div>
+            <div class="recent-item">
+              <h3 class="recent-item-title">
+                Cruise Through Japan's Insane Car Scene
+              </h3>
+              <img
+                class="recent-item-image"
+                src="assets/figma/recent-thumb-1.png"
+                alt="Project thumbnail"
+              />
+              <div class="recent-item-info">
+                <span class="recent-item-date">Edit 2025-11-10</span>
+              </div>
+            </div>
+            <div class="recent-item">
+              <h3 class="recent-item-title">
+                Cruise Through Japan's Insane Car Scene
+              </h3>
+              <img
+                class="recent-item-image"
+                src="assets/figma/recent-thumb-1.png"
+                alt="Project thumbnail"
+              />
+              <div class="recent-item-info">
+                <span class="recent-item-date">Created 2025-11-10</span>
+              </div>
+            </div>
+            <div class="recent-item">
+              <h3 class="recent-item-title">
+                Cruise Through Japan's Insane Car Scene
+              </h3>
+              <img
+                class="recent-item-image"
+                src="assets/figma/recent-thumb-1.png"
+                alt="Project thumbnail"
+              />
+              <div class="recent-item-info">
+                <span class="recent-item-date">Edit 2025-11-10</span>
+              </div>
+            </div>
+            <div class="recent-item">
+              <h3 class="recent-item-title">
+                Cruise Through Japan's Insane Car Scene
+              </h3>
+              <img
+                class="recent-item-image"
+                src="assets/figma/recent-thumb-1.png"
+                alt="Project thumbnail"
+              />
+              <div class="recent-item-info">
+                <span class="recent-item-date">Edit 2025-11-10</span>
+              </div>
+            </div>
+            <div class="recent-item">
+              <h3 class="recent-item-title">
+                Cruise Through Japan's Insane Car Scene
+              </h3>
+              <img
+                class="recent-item-image"
+                src="assets/figma/recent-thumb-1.png"
+                alt="Project thumbnail"
+              />
+              <div class="recent-item-info">
+                <span class="recent-item-date">Edit 2025-11-10</span>
+              </div>
+            </div>
+            <div class="recent-item">
+              <h3 class="recent-item-title">
+                Cruise Through Japan's Insane Car Scene
+              </h3>
+              <img
+                class="recent-item-image"
+                src="assets/figma/recent-thumb-1.png"
+                alt="Project thumbnail"
+              />
+              <div class="recent-item-info">
+                <span class="recent-item-date">Edit 2025-11-10</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+      <aside class="right-panel">
+        <header class="right-panel-header">
+          <div class="right-panel-line"></div>
+          <div class="right-panel-title">Update Activities</div>
+          <div class="right-panel-line"></div>
+        </header>
+
+        <div class="update-list">
+          <article class="update-card">
+            <div class="update-card-text">
+              The voice generation and caption functions have been added. It is
+              able to generate voice-over descriptions with real human voices
+              (only in English) based on relevant descriptions in the operation
+              steps.
+            </div>
+            <div class="update-card-date">Sep.05</div>
+          </article>
+          <article class="update-card">
+            <div class="update-card-text">Google Veo3 Model add！</div>
+            <div class="update-card-date">Aug.25</div>
+          </article>
+          <article class="update-card">
+            <div class="update-card-text">Tools Open！😄</div>
+            <div class="update-card-date">July.01</div>
+          </article>
+        </div>
+      </aside>
+    </div>
+
+    /* 移除 JS 脚本 */
+  </body>
+</html>
+
+
