@@ -3,6 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <title>CreativeFlux Admin – Layout Skeleton (Animated Sidebar)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
     <style>
       :root {
         --page-bg: #f5f5f5;
@@ -22,8 +28,7 @@
         margin: 0;
         min-height: 100vh;
         background: var(--page-bg);
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'SF Pro Text',
-          'Segoe UI', sans-serif;
+        font-family: 'Poppins', sans-serif;
         color: var(--text-main);
       }
 
@@ -123,8 +128,7 @@
       }
 
       .sidebar-nav-item-label {
-        font-family: Poppins, system-ui, -apple-system, BlinkMacSystemFont,
-          'SF Pro Text', 'Segoe UI', sans-serif;
+        font-family: 'Poppins', sans-serif;
         font-size: 12px;
         line-height: 1.32;
         color: #212121;
@@ -219,8 +223,7 @@
       }
 
       .sidebar-user-name {
-        font-family: Poppins, system-ui, -apple-system, BlinkMacSystemFont,
-          'SF Pro Text', 'Segoe UI', sans-serif;
+        font-family: 'Poppins', sans-serif;
         font-size: 14px;
         font-weight: 400;
         color: #000000;
@@ -233,8 +236,7 @@
         font-size: 14px;
         cursor: pointer;
         color: #000000;
-        font-family: Poppins, system-ui, -apple-system, BlinkMacSystemFont,
-          'SF Pro Text', 'Segoe UI', sans-serif;
+        font-family: 'Poppins', sans-serif;
       }
 
       @media (max-width: 1399px) {
@@ -274,6 +276,229 @@
       }
 
       /* 右侧栏容器本身的过渡 */
+      /* Center Area Styles */
+      .main-header {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      .main-title {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+        font-size: 32px;
+        line-height: 1.32;
+        margin: 0;
+        background: linear-gradient(
+          45deg,
+          rgba(255, 91, 0, 1) 5%,
+          rgba(255, 194, 0, 1) 10%,
+          rgba(56, 199, 140, 1) 20%,
+          rgba(8, 180, 185, 1) 25%,
+          rgba(32, 115, 249, 1) 30%,
+          rgba(77, 70, 211, 1) 35%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+      }
+
+      .main-subtitle {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 1.32;
+        color: #8a8a8a;
+        margin: 0;
+      }
+
+      .generate-section {
+        display: flex;
+        flex-direction: row;
+        gap: 24px; /* Gap between two cards */
+      }
+
+      .generate-card {
+        flex: 1;
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 48px; /* Figma padding */
+        min-height: 320px; /* Figma height */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 48px; /* Figma gap */
+        /* border: 1px solid var(--border-subtle); Removed by user */
+        border: 1px solid transparent; /* Reserve space for border */
+        position: relative; /* For absolute positioning of radio */
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      /* Hover State (Universal) */
+      .generate-card:hover {
+        border: 1px solid #e6e6e6;
+        box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08);
+      }
+
+      /* Standard Active State (Default) */
+      .generate-card.active {
+        background: #ffffff;
+        border: 1px solid #437dff; /* Active border usually matches brand color, or use #e6e6e6 as requested */
+        box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08);
+      }
+
+      /* User requested #e6e6e6 for standard active border specifically */
+      .generate-card.active:not(.ai-card) {
+        border-color: #e6e6e6;
+      }
+
+      /* AI Card Special Active State (Colorful) */
+      .generate-card.ai-card.active {
+        /* AI BG + AI Border */
+        background: linear-gradient(90deg, #ffefe6 0%, #edfafa 100%)
+            padding-box,
+          conic-gradient(
+              from 0deg at 50% 50%,
+              #4d46d3 12%,
+              #2073f9 33%,
+              #08b4b9 46%,
+              #38c78c 55%,
+              #ffc200 67%,
+              #ff5b00 83%,
+              #f549ca 97%
+            )
+            border-box;
+        border: 1px solid transparent;
+        box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08);
+      }
+
+      .generate-card-radio {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: 1.5px solid #d9d9d9;
+        background: #ffffff;
+        transition: all 0.2s ease;
+      }
+
+      /* Selected state simulation (or active class) */
+      .generate-card:hover .generate-card-radio,
+      .generate-card.active .generate-card-radio {
+        border-color: #437DFF;
+      }
+
+      .generate-card.active .generate-card-radio {
+        background: #437DFF;
+        box-shadow: inset 0 0 0 4px #ffffff; /* Create the dot */
+      }
+
+      /* Left Card Specific Styles */
+      .generate-card-text {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .generate-card-title {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+        font-size: 24px;
+        line-height: 1.32;
+        color: rgba(0, 0, 0, 0.85);
+        margin: 0;
+      }
+
+      .generate-card-subtitle {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 1.5;
+        color: #8c8c8c;
+        margin: 0;
+      }
+
+      .generate-card-input-wrapper {
+        align-self: stretch;
+      }
+
+      .generate-card-input {
+        width: 100%;
+        padding: 8px 12px;
+        background: #ffffff;
+        border: 1px solid #d9d9d9;
+        border-radius: 2px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.85);
+        outline: none;
+        box-sizing: border-box; /* Ensure padding doesn't affect width */
+      }
+
+      .generate-card-input::placeholder {
+        color: #bfbfbf; /* Standard placeholder color */
+      }
+
+      .generate-card-input:focus {
+        border-color: #40a9ff; /* Focus state, adjustable */
+        box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+      }
+
+      .generate-card-upload-icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        /* Optional: add a subtle background or border to indicate drop zone area if needed,
+           but Figma shows just the icon centered in the bottom area */
+        height: 40px; /* approximate height matching input */
+      }
+
+      .generate-card-upload-icon img {
+        width: 38px;
+        height: 38px;
+        display: block;
+      }
+
+      .recent-section {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      .recent-title {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+        font-size: 24px;
+        line-height: 1.32;
+        color: #000000;
+        margin: 0;
+      }
+
+      .recent-content {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 32px;
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+        min-height: 300px; /* Placeholder height */
+      }
+
+      /* Placeholder for internal rows */
+      .recent-row-placeholder {
+        height: 120px;
+        background: #f9fafb;
+        border-radius: 12px;
+        border: 1px dashed #e6e6e6;
+      }
+
       .right-panel {
         padding: 48px;
         background: #ffffff;
@@ -307,8 +532,7 @@
       }
 
       .right-panel-title {
-        font-family: Poppins, system-ui, -apple-system, BlinkMacSystemFont,
-          'SF Pro Text', 'Segoe UI', sans-serif;
+        font-family: 'Poppins', sans-serif;
         font-size: 14px;
         font-weight: 600;
         color: #000000;
@@ -334,8 +558,7 @@
       }
 
       .update-card-text {
-        font-family: Poppins, system-ui, -apple-system, BlinkMacSystemFont,
-          'SF Pro Text', 'Segoe UI', sans-serif;
+        font-family: 'Poppins', sans-serif;
         font-size: 12px;
         font-weight: 400;
         line-height: 1.5;
@@ -345,20 +568,14 @@
       }
 
       .update-card-date {
-        font-family: Poppins, system-ui, -apple-system, BlinkMacSystemFont,
-          'SF Pro Text', 'Segoe UI', sans-serif;
+        font-family: 'Poppins', sans-serif;
         font-size: 12px;
         font-weight: 600;
         line-height: 1.5;
         color: #000000;
         align-self: flex-end;
       }
-      .right-panel .update-card {
-        /* 移除之前的 animation，改用 transition 配合父容器状态或 JS */
-        /* 但纯 CSS 下，父容器 opacity 变了子元素自然跟着变。*/
-        /* 为了实现“依次”效果，我们需要在宽屏下触发 animation，但 display:none -> block 才触发 keyframes */
-        /* 如果我们用 opacity 切换，animation 不会重播，除非用 animation 配合 media query */
-      }
+      /* .right-panel .update-card 样式在下方通过 media query 定义 */
 
       /* 进场动画定义 */
       @keyframes fadeInUpCard {
@@ -481,7 +698,50 @@
         </div>
       </aside>
 
-      <main class="main"></main>
+      <main class="main">
+        <header class="main-header">
+          <h1 class="main-title">Creative Flux Dashboard</h1>
+          <p class="main-subtitle">
+            Welcome to use Creative Flux，This tool will help you generate
+            amazing video content from your image footage. The whole process is
+            divided into multiple steps, and you can review the results at each
+            step and choose to try again.
+          </p>
+        </header>
+
+        <section class="generate-section">
+          <div class="generate-card ai-card">
+            <div class="generate-card-radio"></div>
+            <div class="generate-card-text">
+              <h3 class="generate-card-title">Images using AID</h3>
+              <p class="generate-card-subtitle">
+                Gallery from AID detail page
+              </p>
+            </div>
+            <div class="generate-card-input-wrapper">
+              <input
+                type="text"
+                class="generate-card-input"
+                placeholder="Input the AID ID, eg: 05766"
+              />
+            </div>
+          </div>
+          <div class="generate-card">
+            <div class="generate-card-radio"></div>
+            <div class="generate-card-text">
+              <h3 class="generate-card-title">Custom Images</h3>
+              <p class="generate-card-subtitle">
+                Drop images from your computer to upload
+              </p>
+            </div>
+            <div class="generate-card-upload-icon">
+              <img src="assets/figma/icon-upload.svg" alt="Upload" />
+            </div>
+          </div>
+        </section>
+
+        
+      </main>
       <aside class="right-panel">
         <header class="right-panel-header">
           <div class="right-panel-line"></div>
@@ -510,6 +770,21 @@
         </div>
       </aside>
     </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const cards = document.querySelectorAll('.generate-card');
+
+        cards.forEach((card) => {
+          card.addEventListener('click', () => {
+            // Remove active class from all cards
+            cards.forEach((c) => c.classList.remove('active'));
+            // Add active class to the clicked card
+            card.classList.add('active');
+          });
+        });
+      });
+    </script>
   </body>
 </html>
 
