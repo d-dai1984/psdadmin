@@ -32,6 +32,8 @@
         color: var(--text-main);
       }
 
+      /* --- Layout Structure --- */
+
       .app-shell {
         --sidebar-width: 240px; /* 宽模式 sidebar */
         display: grid;
@@ -42,12 +44,16 @@
         transition: grid-template-columns 0.8s ease-in-out;
       }
 
+      /* 响应式断点：< 1400px */
       @media (max-width: 1399px) {
         .app-shell {
           --sidebar-width: 112px; /* 窄模式 sidebar */
+          /* 右侧栏隐藏 (宽度变为0) */
           grid-template-columns: var(--sidebar-width) minmax(0, 1fr) 0;
         }
       }
+
+      /* --- Sidebar Styles --- */
 
       .sidebar {
         display: flex;
@@ -57,12 +63,6 @@
         background: var(--page-bg);
       }
 
-      @media (max-width: 1399px) {
-        .sidebar {
-          align-items: center;
-        }
-      }
-
       .sidebar-top {
         display: flex;
         flex-direction: column;
@@ -70,7 +70,7 @@
         gap: 76px;
       }
 
-      /* 统一的导航容器（宽 / 窄模式共用结构），>1200px 对齐视觉布局 */
+      /* 统一的导航容器（宽 / 窄模式共用结构） */
       .sidebar-nav {
         background: #ffffff;
         border: 1px solid #e6e6e6;
@@ -86,7 +86,6 @@
         display: flex;
         flex-direction: column;
         gap: 0;
-        /* 用于断点切换时的渐现 */
         opacity: 1;
       }
 
@@ -101,11 +100,9 @@
         border: none;
         cursor: pointer;
         background: #ffffff;
-        /* 仅保留 hover 背景色的过渡，尺寸不做动画，避免复杂感 */
         transition: background-color 0.15s ease;
       }
 
-      /* hover：非当前态时整行变为浅灰 */
       .sidebar-nav-item:hover {
         background: #f1f1f1;
       }
@@ -113,7 +110,6 @@
       /* 当前态：橙色底，文字 & 图标反白 */
       .sidebar-nav-item--primary-top {
         background: #ff5b00;
-        /* border-radius: 20px 20px 0 0; 由容器统一控制 */
         color: #ffffff;
       }
 
@@ -144,54 +140,11 @@
         filter: brightness(0) invert(1);
       }
 
-      .sidebar-nav-item:not(.sidebar-nav-item--primary-top)
-        .sidebar-nav-item-label {
+      .sidebar-nav-item:not(.sidebar-nav-item--primary-top) .sidebar-nav-item-label {
         font-weight: 400;
       }
 
-      /* 窄模式：<1200px，仅展示圆形 icon 轨道，对应 Sidebar <1200px 版本 */
-      @media (max-width: 1399px) {
-        .sidebar-nav {
-          border-radius: 9999px;
-          padding: 0;
-          align-items: center;
-        }
-
-        .sidebar-nav-list {
-          align-items: center;
-          gap: 8px;
-          /* 初始向左轻微偏移 + 透明，之后滑入并渐现 */
-          opacity: 0;
-          transform: translateX(-6px);
-          /* 缩短等待时间，让内容几乎紧跟宽度变化出现 */
-          animation: sidebarFadeIn 0.25s ease-out 0.15s forwards;
-        }
-
-        .sidebar-nav-item {
-          width: 48px;
-          height: 48px;
-          padding: 0;
-          justify-content: center;
-          border-radius: 9999px;
-        }
-
-        .sidebar-nav-item-label {
-          display: none;
-        }
-      }
-
-      /* 渐现 + 从左向右滑入：用于窄版 sidebar 收缩后让内部元素出现 */
-      @keyframes sidebarFadeIn {
-        from {
-          opacity: 0;
-          transform: translateX(-12px);
-        }
-        to {
-          opacity: 1;
-          transform: translateX(0);
-        }
-      }
-
+      /* User Section */
       .sidebar-user {
         display: flex;
         flex-direction: row;
@@ -205,7 +158,7 @@
         border-radius: 999px;
         overflow: hidden;
         background: var(--surface-subtle);
-        flex-shrink: 0; /* 防止被压缩 */
+        flex-shrink: 0;
       }
 
       .sidebar-user-avatar img {
@@ -239,7 +192,41 @@
         font-family: 'Poppins', sans-serif;
       }
 
+      /* --- Sidebar Responsive Rules (< 1400px) --- */
       @media (max-width: 1399px) {
+        .sidebar {
+          align-items: center;
+        }
+
+        /* Nav changes to pill/icon-only mode */
+        .sidebar-nav {
+          border-radius: 9999px;
+          padding: 0;
+          align-items: center;
+        }
+
+        .sidebar-nav-list {
+          align-items: center;
+          gap: 8px;
+          opacity: 0;
+          transform: translateX(-6px);
+          /* 缩短等待时间，让内容几乎紧跟宽度变化出现 */
+          animation: sidebarFadeIn 0.25s ease-out 0.15s forwards;
+        }
+
+        .sidebar-nav-item {
+          width: 48px;
+          height: 48px;
+          padding: 0;
+          justify-content: center;
+          border-radius: 9999px;
+        }
+
+        .sidebar-nav-item-label {
+          display: none;
+        }
+
+        /* User section changes to vertical stack */
         .sidebar-user {
           flex-direction: column;
           gap: 12px;
@@ -254,6 +241,19 @@
         }
       }
 
+      @keyframes sidebarFadeIn {
+        from {
+          opacity: 0;
+          transform: translateX(-12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      /* --- Main Content Styles --- */
+
       .main {
         padding: 48px 64px;
         display: flex;
@@ -261,42 +261,13 @@
         gap: 48px;
       }
 
-      @media (max-width: 1399px) {
-        .right-panel {
-          /* 窄屏时：通过 opacity/transform 隐藏，而不是 display:none */
-          /* 这样当切换回宽屏时，transition 会生效 */
-          opacity: 0;
-          transform: translateY(20px);
-          pointer-events: none; /* 防止点击 */
-          width: 0; /* 配合 app-shell grid，收缩占位 */
-          padding: 0;
-          overflow: hidden;
-          border: none;
-        }
-      }
-
-      /* 右侧栏容器本身的过渡 */
-      /* Center Area Styles */
-      
-      /* Page Load Animations */
-      @keyframes pageModuleFadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
       .main-header {
         display: flex;
         flex-direction: column;
         gap: 24px;
-        /* 动画 */
+        /* Page Load Animation */
         animation: pageModuleFadeIn 0.6s ease-out forwards;
-        opacity: 0; /* 初始隐藏 */
+        opacity: 0;
       }
 
       .main-title {
@@ -305,7 +276,7 @@
         font-size: 32px;
         line-height: 1.32;
         margin: 0;
-        /* 复用 text-gradient-ai 样式 */
+        /* Text Gradient */
         background: linear-gradient(
           90deg,
           rgba(255, 91, 0, 1) 3%,
@@ -330,11 +301,12 @@
         margin: 0;
       }
 
+      /* Generate Section */
       .generate-section {
         display: flex;
         flex-direction: row;
-        gap: 24px; /* Gap between two cards */
-        /* 动画 - 延迟 0.1s */
+        gap: 24px;
+        /* Page Load Animation (Delayed) */
         animation: pageModuleFadeIn 0.6s ease-out 0.1s forwards;
         opacity: 0;
       }
@@ -343,165 +315,19 @@
         flex: 1;
         background: #ffffff;
         border-radius: 20px;
-        padding: 48px; /* Figma padding */
-        
+        padding: 48px;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        gap: 32px; /* Figma gap */
-        /* border: 1px solid var(--border-subtle); Removed by user */
-        border: 1px solid transparent; /* Reserve space for border */
-        position: relative; /* For absolute positioning of radio */
+        gap: 32px;
+        border: 1px solid transparent;
+        position: relative;
         cursor: pointer;
         transition: all 0.2s ease;
       }
 
-      .recent-section {
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
-        /* 动画 - 延迟 0.2s */
-        animation: pageModuleFadeIn 0.6s ease-out 0.2s forwards;
-        opacity: 0;
-      }
-
-      /* 给右侧栏内容的初始加载动画 */
-      .right-panel-header,
-      .update-list {
-        animation: pageModuleFadeIn 0.6s ease-out 0.3s forwards;
-        opacity: 0;
-      }
-
-      /* --- AI 通用样式定义 --- */
-
-      /* AI 6色线性渐变 (用于文字) */
-      .text-gradient-ai {
-        background: linear-gradient(
-          90deg,
-          rgba(255, 91, 0, 1) 3%,
-          rgba(255, 194, 0, 1) 20%,
-          rgba(56, 199, 140, 1) 44%,
-          rgba(8, 180, 185, 1) 62%,
-          rgba(32, 115, 249, 1) 79%,
-          rgba(77, 70, 211, 1) 100%
-        );
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-        color: transparent;
-      }
-
-      /* AI 圆锥渐变 (用于边框/背景) */
-      .border-gradient-ai {
-        background: #ffffff padding-box, /* 内部白色背景 */
-          conic-gradient(
-              from 0deg at 50% 50%,
-              #4d46d3 12%,
-              #2073f9 33%,
-              #08b4b9 46%,
-              #38c78c 55%,
-              #ffc200 67%,
-              #ff5b00 83%,
-              #f549ca 97%
-            )
-            border-box; /* 边框渐变 */
-        border: 1px solid transparent;
-      }
-
-      /* --- 卡片特殊交互: .card-hover-ai --- */
-
-      /* 默认状态下，按钮是普通样式 (继承 .generate-card-btn) */
-
-      /* Hover 状态 */
-      .generate-card.card-hover-ai:hover {
-        background: #f0f7ff;
-        border: 1px solid #94bdff;
-        box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08);
-      }
-
-      /* Hover 时，内部按钮变为 AI 样式 */
-      .generate-card.card-hover-ai:hover .generate-card-btn {
-        /* 应用 AI 边框渐变 */
-        background: #f0f7ff padding-box, /* 背景色要跟卡片hover背景一致 */
-          conic-gradient(
-              from 0deg at 50% 50%,
-              #4d46d3 12%,
-              #2073f9 33%,
-              #08b4b9 46%,
-              #38c78c 55%,
-              #ffc200 67%,
-              #ff5b00 83%,
-              #f549ca 97%
-            )
-            border-box;
-        border: 1px solid transparent;
-
-        /* 应用 AI 文字渐变 */
-        background-image: linear-gradient(
-          90deg,
-          rgba(255, 91, 0, 1) 3%,
-          rgba(255, 194, 0, 1) 20%,
-          rgba(56, 199, 140, 1) 44%,
-          rgba(8, 180, 185, 1) 62%,
-          rgba(32, 115, 249, 1) 79%,
-          rgba(77, 70, 211, 1) 100%
-        ); /* 文字渐变层 */
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-        color: transparent; /* 确保文字透明以显示渐变 */
-
-        /* 修正：由于 background-clip: text 会裁剪背景色，导致边框渐变失效。
-           解决方法：用伪元素做边框，或者用 box-shadow 模拟，或者简单点：
-           为了同时实现 "背景色 + 渐变边框 + 渐变文字"，CSS 比较 trick。
-           
-           方案 B (更稳健)：
-           按钮文字用 span 包裹应用 text-gradient。
-           按钮本身应用 border-gradient。
-        */
-      }
-
-      /* 修正方案：Hover 时按钮容器变边框，内部文字变渐变 */
-      .generate-card.card-hover-ai:hover .generate-card-btn {
-        /* 按钮背景 (用线性渐变模拟纯色 #FFFFFF) + 渐变边框 */
-        /* 修改位置：将下方的 #ffffff 替换为你想要的背景色 */
-        background: linear-gradient(#ffffff, #ffffff) padding-box,
-          conic-gradient(
-              from 0deg at 50% 50%,
-              #4d46d3 12%,
-              #2073f9 33%,
-              #08b4b9 46%,
-              #38c78c 55%,
-              #ffc200 67%,
-              #ff5b00 83%,
-              #f549ca 97%
-            )
-            border-box;
-        border: 1px solid transparent;
-        color: #353535; /* 默认颜色，会被子元素覆盖 */
-      }
-
-      /* 按钮内部文字 span (需要 HTML 配合加 span) */
-      .generate-card.card-hover-ai:hover .generate-card-btn span {
-        background: linear-gradient(
-          90deg,
-          rgba(255, 91, 0, 1) 3%,
-          rgba(255, 194, 0, 1) 20%,
-          rgba(56, 199, 140, 1) 44%,
-          rgba(8, 180, 185, 1) 62%,
-          rgba(32, 115, 249, 1) 79%,
-          rgba(77, 70, 211, 1) 100%
-        );
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-        color: transparent;
-      }
-
-      /* --- End AI Styles --- */
-
-      /* Left Card Specific Styles */
+      /* Generate Card Inner Elements */
       .generate-card-text {
         display: flex;
         flex-direction: column;
@@ -527,27 +353,6 @@
         margin: 0;
       }
 
-      .generate-card-input-wrapper {
-        align-self: stretch;
-      }
-
-      .generate-card-input {
-        width: 100%;
-        padding: 8px 12px;
-        background: #ffffff;
-        border: 1px solid #d9d9d9;
-        border-radius: 2px;
-        font-family: 'Poppins', sans-serif;
-        font-size: 14px;
-        color: rgba(0, 0, 0, 0.85);
-        outline: none;
-        box-sizing: border-box; /* Ensure padding doesn't affect width */
-      }
-
-      .generate-card-input::placeholder {
-        color: #bfbfbf; /* Standard placeholder color */
-      }
-
       .generate-card-btn {
         display: flex;
         justify-content: center;
@@ -563,7 +368,7 @@
         color: #353535;
         cursor: pointer;
         white-space: nowrap;
-        margin-top: auto; /* Push to bottom if needed, or rely on gap */
+        margin-top: auto;
       }
 
       .generate-card-btn.disabled {
@@ -572,10 +377,56 @@
         cursor: not-allowed;
       }
 
+      /* AI Card Styles & Hover */
+      .generate-card.card-hover-ai:hover {
+        background: #f0f7ff;
+        border: 1px solid #94bdff;
+        box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08);
+      }
+
+      .generate-card.card-hover-ai:hover .generate-card-btn {
+        /* AI Border Gradient + White Background */
+        background: linear-gradient(#ffffff, #ffffff) padding-box,
+          conic-gradient(
+              from 0deg at 50% 50%,
+              #4d46d3 12%,
+              #2073f9 33%,
+              #08b4b9 46%,
+              #38c78c 55%,
+              #ffc200 67%,
+              #ff5b00 83%,
+              #f549ca 97%
+            )
+            border-box;
+        border: 1px solid transparent;
+        color: #353535;
+      }
+
+      .generate-card.card-hover-ai:hover .generate-card-btn span {
+        /* AI Text Gradient */
+        background: linear-gradient(
+          90deg,
+          rgba(255, 91, 0, 1) 3%,
+          rgba(255, 194, 0, 1) 20%,
+          rgba(56, 199, 140, 1) 44%,
+          rgba(8, 180, 185, 1) 62%,
+          rgba(32, 115, 249, 1) 79%,
+          rgba(77, 70, 211, 1) 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+      }
+
+      /* Recent Section */
       .recent-section {
         display: flex;
         flex-direction: column;
         gap: 24px;
+        /* Page Load Animation (Delayed) */
+        animation: pageModuleFadeIn 0.6s ease-out 0.2s forwards;
+        opacity: 0;
       }
 
       .recent-title {
@@ -590,12 +441,10 @@
       .recent-content {
         border-radius: 20px;
         display: grid;
-        /* 自动填充：每列最小 220px，最大 1fr */
+        /* Grid: Auto-fill with min 220px */
         grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
         gap: 32px;
       }
-
-      /* .recent-row Removed */
 
       .recent-item {
         background: #ffffff;
@@ -604,10 +453,9 @@
         display: flex;
         flex-direction: column;
         gap: 10px;
-        /* Grid item 默认会拉伸填满格子 */
         transition: all 0.2s ease;
         cursor: pointer;
-        border: 1px solid transparent; /* 预留边框空间，防止 hover 时抖动 */
+        border: 1px solid transparent;
       }
 
       .recent-item:hover {
@@ -624,7 +472,6 @@
         color: #212121;
         padding: 8px 4px;
         margin: 0;
-        /* 限制标题行数，防止过高 */
         display: -webkit-box;
         -webkit-line-clamp: 2;
         line-clamp: 2;
@@ -634,7 +481,6 @@
 
       .recent-item-image {
         width: 100%;
-        /* 修正比例为 8:5 */
         aspect-ratio: 8 / 5;
         border-radius: 6px;
         background: rgba(0, 0, 0, 0.03);
@@ -649,7 +495,7 @@
         align-items: center;
         padding: 4px 8px;
         gap: 10px;
-        margin-top: auto; /* 即使内容少，info 也推到底部 */
+        margin-top: auto;
       }
 
       .recent-item-date {
@@ -661,7 +507,7 @@
         margin: 0;
       }
 
-      /* .recent-divider Removed */
+      /* --- Right Panel Styles --- */
 
       .right-panel {
         padding: 48px;
@@ -671,13 +517,13 @@
         flex-direction: column;
         align-items: center;
         gap: 24px;
-        /* 增加 opacity/transform 过渡 */
+        width: 100%;
+        overflow: hidden;
+        /* Transition for responsive hide/show */
         transition: opacity 0.4s ease-out, transform 0.4s ease-out,
           width 0.4s ease-out, padding 0.4s ease-out;
         opacity: 1;
         transform: translateY(0);
-        width: 100%; /* grid 给多少占多少 */
-        overflow: hidden;
       }
 
       .right-panel-header {
@@ -686,6 +532,9 @@
         justify-content: center;
         align-self: stretch;
         gap: 10px;
+        /* Page Load Animation (Delayed) */
+        animation: pageModuleFadeIn 0.6s ease-out 0.3s forwards;
+        opacity: 0;
       }
 
       .right-panel-line {
@@ -707,6 +556,9 @@
         flex-direction: column;
         align-self: stretch;
         gap: 10px;
+        /* Page Load Animation (Delayed) */
+        animation: pageModuleFadeIn 0.6s ease-out 0.3s forwards;
+        opacity: 0;
       }
 
       .update-card {
@@ -739,9 +591,64 @@
         color: #000000;
         align-self: flex-end;
       }
-      /* .right-panel .update-card 样式在下方通过 media query 定义 */
 
-      /* 进场动画定义 */
+      /* Right Panel Responsive Rules */
+
+      /* Wide Screen (>= 1400px): Card Entrance Animation */
+      @media (min-width: 1400px) {
+        /* 
+         * The initial load animation (pageModuleFadeIn) is applied to .update-list container.
+         * This specific animation is for when the panel reappears from narrow mode.
+         */
+        .right-panel .update-card {
+          animation: fadeInUpCard 0.5s ease-out forwards;
+          opacity: 0;
+        }
+        .right-panel .update-card:nth-child(1) {
+          animation-delay: 0.2s;
+        }
+        .right-panel .update-card:nth-child(2) {
+          animation-delay: 0.3s;
+        }
+        .right-panel .update-card:nth-child(3) {
+          animation-delay: 0.4s;
+        }
+      }
+
+      /* Narrow Screen (< 1400px): Hide Panel */
+      @media (max-width: 1399px) {
+        .right-panel {
+          opacity: 0;
+          transform: translateY(20px);
+          pointer-events: none;
+          width: 0;
+          padding: 0;
+          overflow: hidden;
+          border: none;
+        }
+        
+        /* Reset card animation so it can replay when expanding */
+        .right-panel .update-card {
+          opacity: 0;
+          animation: none;
+        }
+      }
+
+      /* --- Global Animations --- */
+
+      /* Initial Page Load Fade In */
+      @keyframes pageModuleFadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Card Entrance Animation (for Right Panel expand) */
       @keyframes fadeInUpCard {
         from {
           opacity: 0;
@@ -753,39 +660,14 @@
         }
       }
 
-      /* 在宽屏下，对卡片应用动画 */
-      @media (min-width: 1400px) {
-        .right-panel .update-card {
-          animation: fadeInUpCard 0.5s ease-out forwards;
-          opacity: 0; /* 动画开始前隐藏 */
-        }
-        .right-panel .update-card:nth-child(1) {
-          animation-delay: 0.2s; /* 稍晚于 panel 出现 */
-        }
-        .right-panel .update-card:nth-child(2) {
-          animation-delay: 0.3s;
-        }
-        .right-panel .update-card:nth-child(3) {
-          animation-delay: 0.4s;
-        }
-      }
-
-      /* 窄屏下重置卡片状态，以便切回宽屏时重播 */
-      @media (max-width: 1399px) {
-        .right-panel .update-card {
-          opacity: 0;
-          animation: none; /* 停止动画 */
-        }
-      }
-
       @media (prefers-reduced-motion: reduce) {
-        .app-shell,
-        .sidebar-nav,
-        .sidebar-nav-item,
-        .right-panel .update-card {
-          transition: none !important;
-          animation: none !important;
-          opacity: 1 !important;
+        *,
+        ::before,
+        ::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+          scroll-behavior: auto !important;
         }
       }
     </style>
@@ -1066,5 +948,3 @@
     /* 移除 JS 脚本 */
   </body>
 </html>
-
-
