@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>CreativeFlux Admin – Layout Skeleton</title>
+    <style>
+      :root {
+        --page-bg: #f5f5f5; /* 左栏与中间栏统一底色 */
+        --surface: #ffffff;
+        --surface-subtle: #fafafa;
+        --border-subtle: #e6e6e6;
+        --text-main: #111827;
+        --text-muted: #6b7280;
+        --primary: #111827;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--page-bg);
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'SF Pro Text',
+          'Segoe UI', sans-serif;
+        color: var(--text-main);
+      }
+
+      .app-shell {
+        --sidebar-width: 240px; /* 宽模式 sidebar */
+        display: grid;
+        grid-template-columns: var(--sidebar-width) minmax(0, 1fr) 360px; /* right 栏 360px */
+        min-height: 100vh;
+        background: var(--page-bg);
+      }
+
+      @media (max-width: 1199px) {
+        .app-shell {
+          --sidebar-width: 112px; /* 窄模式 sidebar，按 Figma 容器宽度 */
+          grid-template-columns: var(--sidebar-width) minmax(0, 1fr) 0;
+        }
+      }
+
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 48px 0 48px 48px;
+        background: var(--page-bg);
+      }
+
+      @media (max-width: 1199px) {
+        .sidebar {
+          align-items: center;
+        }
+      }
+
+      .sidebar-top {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 76px;
+      }
+
+      /* 统一的导航容器（宽 / 窄模式共用结构），>1200px 对齐视觉布局 */
+      .sidebar-nav {
+        background: #ffffff;
+        border: 1px solid #e6e6e6;
+        border-radius: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        padding: 0;
+        overflow: hidden;
+      }
+
+      .sidebar-nav-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+
+      .sidebar-nav-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 64px;
+        padding: 20px;
+        width: 100%;
+        box-sizing: border-box;
+        border: none;
+        cursor: pointer;
+        background: #ffffff; /* 默认非当前态底色 */
+        transition: background-color 0.15s ease;
+      }
+
+      /* hover：非当前态时整行变为浅灰 */
+      .sidebar-nav-item:hover {
+        background: #f1f1f1;
+      }
+
+      /* 顶部 Dashboard：橙色条，圆角 20 20 0 0，白字（fill_WPHWXT + EN/12 Semi） */
+      .sidebar-nav-item--primary-top {
+        background: #ff5b00;
+        /*border-radius: 20px 20px 0 0; */
+        color: #ffffff;
+      }
+
+      /* 当前态保持橙色，不受 hover 灰底影响 */
+      .sidebar-nav-item--primary-top:hover {
+        background: #ff5b00;
+      }
+
+      /* 中间 Video Generation：橙色 pill，圆角 9999，阴影只在 icon 上模拟 */
+      .sidebar-nav-item--primary-pill {
+        background: #ff5b00;
+        border-radius: 9999px;
+      }
+
+      .sidebar-nav-item-icon {
+        width: 24px;
+        height: 24px;
+        display: block;
+      }
+
+      .sidebar-nav-item-label {
+        font-family: Poppins, system-ui, -apple-system, BlinkMacSystemFont,
+          'SF Pro Text', 'Segoe UI', sans-serif;
+        font-size: 12px; /* EN/Boby 12 */
+        line-height: 1.32;
+        color: #212121; /* fill_J2QLIM */
+        white-space: nowrap;
+      }
+
+      /* Dashboard 文案是半粗 + 白色 */
+      .sidebar-nav-item--primary-top .sidebar-nav-item-label {
+        font-weight: 600; /* Semi */
+        color: #ffffff; /* fill_9OZ2IE on orange background */
+      }
+
+      /* 当前态下，图标也反白处理，接近 Figma 橙底白 icon 效果 */
+      .sidebar-nav-item--primary-top .sidebar-nav-item-icon {
+        filter: brightness(0) invert(1);
+      }
+
+      /* 其他项是 Regular 400 */
+      .sidebar-nav-item:not(.sidebar-nav-item--primary-top)
+        .sidebar-nav-item-label {
+        font-weight: 400;
+      }
+
+      /* 窄模式：<1200px，仅展示圆形 icon 轨道，对应 Sidebar <1200px 版本 */
+      @media (max-width: 1199px) {
+        .sidebar-nav {
+          border-radius: 9999px;
+          padding: 0;
+          align-items: center;
+        }
+
+        .sidebar-nav-list {
+          align-items: center;
+          gap: 8px;
+        }
+
+        .sidebar-nav-item {
+          width: 48px;
+          height: 48px;
+          padding: 0;
+          justify-content: center;
+        }
+
+        .sidebar-nav-item--primary-top {
+          border-radius: 9999px;
+        }
+
+        .sidebar-nav-item-label {
+          display: none;
+        }
+      }
+
+      .sidebar-user {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .sidebar-user-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 999px;
+        overflow: hidden;
+        background: var(--surface-subtle);
+      }
+
+      .sidebar-user-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .sidebar-logout {
+        border: none;
+        padding: 0;
+        background: none;
+        font-size: 14px;
+        cursor: pointer;
+        color: #000000;
+      }
+
+      .main {
+        padding: 48px 64px;
+        display: flex;
+        flex-direction: column;
+        gap: 48px;
+      }
+
+      @media (max-width: 1199px) {
+        .main {
+          /* 保持与 >=1200px 相同的 padding/gap，不做改变 */
+        }
+      }
+
+      .right-panel {
+        padding: 48px;
+        background: var(--surface);
+        border-left: 1px solid var(--border-subtle);
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      @media (max-width: 1199px) {
+        .right-panel {
+          display: none;
+        }
+      }
+
+      .right-panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .right-panel-title {
+        font-size: 16px;
+        font-weight: 600;
+      }
+
+      .right-panel-caption {
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+
+      .update-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .update-card {
+        padding: 16px;
+        border-radius: 12px;
+        background: var(--surface-subtle);
+        border: 1px solid var(--border-subtle);
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        font-size: 13px;
+      }
+
+      .update-card-title {
+        font-weight: 500;
+      }
+
+      .update-card-meta {
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="sidebar-top">
+          <nav class="sidebar-nav">
+            <div class="sidebar-nav-list">
+              <button class="sidebar-nav-item" type="button">
+                <img
+                  class="sidebar-nav-item-icon"
+                  src="assets/figma/NewIcon/Category.svg"
+                  alt="Dashboard"
+                />
+                <span class="sidebar-nav-item-label">Dashboard</span>
+              </button>
+              <button class="sidebar-nav-item" type="button">
+                <img
+                  class="sidebar-nav-item-icon"
+                  src="assets/figma/NewIcon/Document.svg"
+                  alt="Text to Video"
+                />
+                <span class="sidebar-nav-item-label">Text to Video</span>
+              </button>
+              <button class="sidebar-nav-item sidebar-nav-item--primary-top" type="button">
+                <img
+                  class="sidebar-nav-item-icon"
+                  src="assets/figma/NewIcon/Video.svg"
+                  alt="Video"
+                />
+                <span class="sidebar-nav-item-label">Video Generation</span>
+              </button>
+              <button class="sidebar-nav-item" type="button">
+                <img
+                  class="sidebar-nav-item-icon"
+                  src="assets/figma/NewIcon/Folder.svg"
+                  alt="Media Library"
+                />
+                <span class="sidebar-nav-item-label">Media Library</span>
+              </button>
+              <button class="sidebar-nav-item" type="button">
+                <img
+                  class="sidebar-nav-item-icon"
+                  src="assets/figma/NewIcon/Graph.svg"
+                  alt="Analytics"
+                />
+                <span class="sidebar-nav-item-label">Data Performance</span>
+              </button>
+              <button class="sidebar-nav-item" type="button">
+                <img
+                  class="sidebar-nav-item-icon"
+                  src="assets/figma/NewIcon/Setting.svg"
+                  alt="Settings"
+                />
+                <span class="sidebar-nav-item-label">Setting</span>
+              </button>
+            </div>
+          </nav>
+        </div>
+
+        <div class="sidebar-user">
+          <div class="sidebar-user-avatar">
+            <img src="assets/figma/user-avatar.png" alt="User avatar" />
+          </div>
+          <button class="sidebar-logout">Logout</button>
+        </div>
+      </aside>
+      <main class="main"></main>
+      <aside class="right-panel"></aside>
+    </div>
+  </body>
+</html>
