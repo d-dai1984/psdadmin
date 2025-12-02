@@ -259,27 +259,152 @@
         gap: 48px;
       }
 
-      .right-panel {
-        padding: 48px;
-        background: var(--surface);
-        border-left: 1px solid var(--border-subtle);
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
-      }
-
       @media (max-width: 1399px) {
         .right-panel {
-          display: none;
+          /* 窄屏时：通过 opacity/transform 隐藏，而不是 display:none */
+          /* 这样当切换回宽屏时，transition 会生效 */
+          opacity: 0;
+          transform: translateY(20px);
+          pointer-events: none; /* 防止点击 */
+          width: 0; /* 配合 app-shell grid，收缩占位 */
+          padding: 0;
+          overflow: hidden;
+          border: none;
         }
       }
 
-      /* 动画无障碍：用户偏好减少动效时关闭 transition */
+      /* 右侧栏容器本身的过渡 */
+      .right-panel {
+        padding: 48px;
+        background: #ffffff;
+        border-left: 1px solid var(--border-subtle);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+        /* 增加 opacity/transform 过渡 */
+        transition: opacity 0.4s ease-out, transform 0.4s ease-out,
+          width 0.4s ease-out, padding 0.4s ease-out;
+        opacity: 1;
+        transform: translateY(0);
+        width: 100%; /* grid 给多少占多少 */
+        overflow: hidden;
+      }
+
+      .right-panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        align-self: stretch;
+        gap: 10px;
+      }
+
+      .right-panel-line {
+        height: 1px;
+        flex: 1;
+        background-color: #4a4a4a;
+        opacity: 0.5;
+      }
+
+      .right-panel-title {
+        font-family: Poppins, system-ui, -apple-system, BlinkMacSystemFont,
+          'SF Pro Text', 'Segoe UI', sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        color: #000000;
+      }
+
+      .update-list {
+        display: flex;
+        flex-direction: column;
+        align-self: stretch;
+        gap: 10px;
+      }
+
+      .update-card {
+        padding: 20px;
+        border-radius: 12px;
+        background: #fafafa;
+        border: 1px solid var(--border-subtle);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .update-card-text {
+        font-family: Poppins, system-ui, -apple-system, BlinkMacSystemFont,
+          'SF Pro Text', 'Segoe UI', sans-serif;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #757575;
+        text-align: left;
+        width: 100%;
+      }
+
+      .update-card-date {
+        font-family: Poppins, system-ui, -apple-system, BlinkMacSystemFont,
+          'SF Pro Text', 'Segoe UI', sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.5;
+        color: #000000;
+        align-self: flex-end;
+      }
+      .right-panel .update-card {
+        /* 移除之前的 animation，改用 transition 配合父容器状态或 JS */
+        /* 但纯 CSS 下，父容器 opacity 变了子元素自然跟着变。*/
+        /* 为了实现“依次”效果，我们需要在宽屏下触发 animation，但 display:none -> block 才触发 keyframes */
+        /* 如果我们用 opacity 切换，animation 不会重播，除非用 animation 配合 media query */
+      }
+
+      /* 进场动画定义 */
+      @keyframes fadeInUpCard {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* 在宽屏下，对卡片应用动画 */
+      @media (min-width: 1400px) {
+        .right-panel .update-card {
+          animation: fadeInUpCard 0.5s ease-out forwards;
+          opacity: 0; /* 动画开始前隐藏 */
+        }
+        .right-panel .update-card:nth-child(1) {
+          animation-delay: 0.2s; /* 稍晚于 panel 出现 */
+        }
+        .right-panel .update-card:nth-child(2) {
+          animation-delay: 0.3s;
+        }
+        .right-panel .update-card:nth-child(3) {
+          animation-delay: 0.4s;
+        }
+      }
+
+      /* 窄屏下重置卡片状态，以便切回宽屏时重播 */
+      @media (max-width: 1399px) {
+        .right-panel .update-card {
+          opacity: 0;
+          animation: none; /* 停止动画 */
+        }
+      }
+
       @media (prefers-reduced-motion: reduce) {
         .app-shell,
         .sidebar-nav,
-        .sidebar-nav-item {
+        .sidebar-nav-item,
+        .right-panel .update-card {
           transition: none !important;
+          animation: none !important;
+          opacity: 1 !important;
         }
       }
     </style>
@@ -357,7 +482,33 @@
       </aside>
 
       <main class="main"></main>
-      <aside class="right-panel"></aside>
+      <aside class="right-panel">
+        <header class="right-panel-header">
+          <div class="right-panel-line"></div>
+          <div class="right-panel-title">Update Activities</div>
+          <div class="right-panel-line"></div>
+        </header>
+
+        <div class="update-list">
+          <article class="update-card">
+            <div class="update-card-text">
+              The voice generation and caption functions have been added. It is
+              able to generate voice-over descriptions with real human voices
+              (only in English) based on relevant descriptions in the operation
+              steps.
+            </div>
+            <div class="update-card-date">Sep.05</div>
+          </article>
+          <article class="update-card">
+            <div class="update-card-text">Google Veo3 Model add！</div>
+            <div class="update-card-date">Aug.25</div>
+          </article>
+          <article class="update-card">
+            <div class="update-card-text">Tools Open！😄</div>
+            <div class="update-card-date">July.01</div>
+          </article>
+        </div>
+      </aside>
     </div>
   </body>
 </html>
