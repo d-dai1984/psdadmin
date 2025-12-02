@@ -37,7 +37,7 @@
         transition: grid-template-columns 0.8s ease-in-out;
       }
 
-      @media (max-width: 1199px) {
+      @media (max-width: 1399px) {
         .app-shell {
           --sidebar-width: 112px; /* 窄模式 sidebar */
           grid-template-columns: var(--sidebar-width) minmax(0, 1fr) 0;
@@ -52,7 +52,7 @@
         background: var(--page-bg);
       }
 
-      @media (max-width: 1199px) {
+      @media (max-width: 1399px) {
         .sidebar {
           align-items: center;
         }
@@ -146,7 +146,7 @@
       }
 
       /* 窄模式：<1200px，仅展示圆形 icon 轨道，对应 Sidebar <1200px 版本 */
-      @media (max-width: 1199px) {
+      @media (max-width: 1399px) {
         .sidebar-nav {
           border-radius: 9999px;
           padding: 0;
@@ -188,12 +188,11 @@
         }
       }
 
-      /* 用户区域保持不变，仅布局 */
       .sidebar-user {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         align-items: center;
-        gap: 12px;
+        gap: 16px;
       }
 
       .sidebar-user-avatar {
@@ -202,6 +201,7 @@
         border-radius: 999px;
         overflow: hidden;
         background: var(--surface-subtle);
+        flex-shrink: 0; /* 防止被压缩 */
       }
 
       .sidebar-user-avatar img {
@@ -211,6 +211,21 @@
         display: block;
       }
 
+      .sidebar-user-info {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+      }
+
+      .sidebar-user-name {
+        font-family: Poppins, system-ui, -apple-system, BlinkMacSystemFont,
+          'SF Pro Text', 'Segoe UI', sans-serif;
+        font-size: 14px;
+        font-weight: 400;
+        color: #000000;
+      }
+
       .sidebar-logout {
         border: none;
         padding: 0;
@@ -218,6 +233,23 @@
         font-size: 14px;
         cursor: pointer;
         color: #000000;
+        font-family: Poppins, system-ui, -apple-system, BlinkMacSystemFont,
+          'SF Pro Text', 'Segoe UI', sans-serif;
+      }
+
+      @media (max-width: 1399px) {
+        .sidebar-user {
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .sidebar-user-info {
+          align-items: center;
+        }
+
+        .sidebar-user-name {
+          display: none;
+        }
       }
 
       .main {
@@ -236,7 +268,7 @@
         gap: 24px;
       }
 
-      @media (max-width: 1199px) {
+      @media (max-width: 1399px) {
         .right-panel {
           display: none;
         }
@@ -317,7 +349,10 @@
           <div class="sidebar-user-avatar">
             <img src="assets/figma/user-avatar.png" alt="User avatar" />
           </div>
-          <button class="sidebar-logout">Logout</button>
+          <div class="sidebar-user-info">
+            <div class="sidebar-user-name">Hi, Ming Xu</div>
+            <button class="sidebar-logout">Logout</button>
+          </div>
         </div>
       </aside>
 
